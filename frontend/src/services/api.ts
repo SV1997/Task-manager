@@ -146,7 +146,7 @@ downloadExcel: async () => {
   const token = localStorage.getItem('token');
 
   // ✅ Use fetch directly — bypasses axios interceptor that corrupts blobs
-  const response = await fetch('http://localhost:80/api/tasks/download/excel', {
+  const response = await fetch('https://separate-sibyl-selfprojectvaibhav-1ea40343.koyeb.app/api/tasks/download/excel', {
     headers: {
       Authorization: `Bearer ${token}`,
     },
