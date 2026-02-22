@@ -13,7 +13,7 @@ export const Login = ()=> {
   const [showPassword, setShowPassword] = useState(false);
   useEffect(()=>{
     const verifyToken=async()=>{      
-      const res:any = authAPI.verifyToken()
+      const res:any = await authAPI.verifyToken()
       console.log("visit", res)
       if(res.success){
         navigate("/");
