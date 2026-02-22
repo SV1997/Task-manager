@@ -44,7 +44,7 @@ export const Signup = () => {
     setLoading(true);
 
     try {
-      const response = await authAPI.signup(name, email, password);
+      const response:any = await authAPI.signup(name, email, password);
       
       if (response.success) {
         localStorage.setItem('token', response.token);

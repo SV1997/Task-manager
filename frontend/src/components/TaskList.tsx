@@ -9,14 +9,14 @@ interface TaskListProps {
   onCountChange?: (count: number) => void; // should be TOTAL entries
 }
 
-type GetTasksResponse = {
-  tasks: Task[];
-  totalPages: number;
+// type GetTasksResponse = {
+//   tasks: Task[];
+//   totalPages: number;
 
-  // ✅ add ONE of these from backend for total entries
-  totalCount?: number;
-  totalTasks?: number;
-};
+//   // ✅ add ONE of these from backend for total entries
+//   totalCount?: number;
+//   totalTasks?: number;
+// };
 
 const LIMIT = 10;
 
