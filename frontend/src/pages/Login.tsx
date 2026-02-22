@@ -1,5 +1,5 @@
 // src/pages/Login.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { authAPI } from '../services/api';
 import './Auth.css';
 import { useNavigate } from 'react-router-dom';
@@ -11,6 +11,15 @@ export const Login = ()=> {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  useEffect(()=>{
+    const verifyToken=async()=>{
+      const res:any = authAPI.verifyToken()
+      if(res.success){
+        navigate("/");
+      }
+    }
+    verifyToken();
+  },[])
   const navigate = useNavigate();
   const handleLoginSuccess = (token: string, userData: any) => {
     localStorage.setItem("userData", JSON.stringify(userData));

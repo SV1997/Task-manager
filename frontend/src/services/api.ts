@@ -73,6 +73,11 @@ export const authAPI = {
     });
     return response;
   },
+    verifyToken: async()=>{
+    const response = await api.get<{ success: boolean; stats: TaskStats }>('/api/tasks/verify');
+    return response.data;
+
+  },
   isLogin: async ()=>{
     const res = await api.get('/api/auth/isLogin')
     console.log(res);
@@ -142,7 +147,9 @@ export const taskAPI = {
     return response.data;
   },
 
-downloadExcel: async () => {
+
+
+  downloadExcel: async () => {
   const token = localStorage.getItem('token');
 
   // ✅ Use fetch directly — bypasses axios interceptor that corrupts blobs
