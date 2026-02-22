@@ -12,10 +12,9 @@ export const Login = ()=> {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   useEffect(()=>{
-    const verifyToken=async()=>{
-      console.log("visit");
-      
+    const verifyToken=async()=>{      
       const res:any = authAPI.verifyToken()
+      console.log("visit", res)
       if(res.success){
         navigate("/");
       }
