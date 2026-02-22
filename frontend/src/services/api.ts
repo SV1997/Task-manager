@@ -75,7 +75,7 @@ export const authAPI = {
   },
     verifyToken: async()=>{
     const response = await api.get<{ success: boolean; stats: TaskStats }>('/api/auth/verify');
-    return response.data;
+    return response;
 
   },
   isLogin: async ()=>{
