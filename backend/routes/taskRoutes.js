@@ -19,14 +19,14 @@ const { validate } = require('../middleware/validator');
  * @desc    Download all tasks as Excel file
  * @access  Public (or can be made Private by adding authenticateToken)
  */
-router.get('/download/excel', downloadTasksExcel);
+router.get('/download/excel',authenticateToken, downloadTasksExcel);
 
 /**
  * @route   GET /api/tasks/stats
  * @desc    Get task statistics
  * @access  Public (or can be made Private by adding authenticateToken)
  */
-router.get('/stats', getTaskStats);
+router.get('/stats',authenticateToken, getTaskStats);
 
 /**
  * @route   POST /api/tasks
@@ -35,7 +35,7 @@ router.get('/stats', getTaskStats);
  */
 router.post(
   '/',
-  optionalAuth, // Change to authenticateToken if you want to make it private
+  authenticateToken, // Change to authenticateToken if you want to make it private
   [
     body('author')
       .trim()
@@ -78,14 +78,14 @@ router.post(
  * @desc    Get all tasks with optional filters
  * @access  Public
  */
-router.get('/', getAllTasks);
+router.get('/',authenticateToken, getAllTasks);
 
 /**
  * @route   GET /api/tasks/:id
  * @desc    Get single task by ID
  * @access  Public
  */
-router.get('/:id', getTaskById);
+router.get('/:id',authenticateToken, getTaskById);
 
 /**
  * @route   PUT /api/tasks/:id

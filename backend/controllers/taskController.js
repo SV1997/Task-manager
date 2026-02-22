@@ -213,108 +213,70 @@ const deleteTask = async (req, res) => {
  */
 const downloadTasksExcel = async (req, res) => {
   try {
-    const { author, division, status, priority, startDate, endDate } = req.query;
-
-    // Build filter object (same as getAllTasks)
-    const filter = {};
-    
-    if (author) filter.author = new RegExp(author, 'i');
-    if (division) filter.division = new RegExp(division, 'i');
-    if (status) filter.status = status;
-    if (priority) filter.priority = priority;
-    
-    if (startDate || endDate) {
-      filter.dateOfTask = {};
-      if (startDate) filter.dateOfTask.$gte = new Date(startDate);
-      if (endDate) filter.dateOfTask.$lte = new Date(endDate);
-    }
-
-    // Get all tasks (no pagination for export)
-    const tasks = await Task.find(filter)
+    // Fetch all tasks, no filters
+    const tasks = await Task.find()
       .sort({ dateOfTask: -1, createdAt: -1 })
       .populate('createdBy', 'name email');
 
-    // Create a new workbook
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet('Tasks');
 
-    // Define columns
     worksheet.columns = [
-      { header: 'ID', key: '_id', width: 25 },
-      { header: 'Author', key: 'author', width: 20 },
-      { header: 'Division', key: 'division', width: 20 },
-      { header: 'Task', key: 'task', width: 50 },
-      { header: 'Date of Task', key: 'dateOfTask', width: 15 },
-      { header: 'Status', key: 'status', width: 15 },
-      { header: 'Priority', key: 'priority', width: 15 },
-      { header: 'Created By', key: 'createdBy', width: 20 },
-      { header: 'Created At', key: 'createdAt', width: 20 },
-      { header: 'Updated At', key: 'updatedAt', width: 20 }
+      { header: 'Author',     key: 'author',     width: 20 },
+      { header: 'Division',   key: 'division',   width: 20 },
+      { header: 'Task',       key: 'task',        width: 50 },
+      { header: 'Date',       key: 'dateOfTask',  width: 15 },
+      { header: 'Status',     key: 'status',      width: 15 },
+      { header: 'Priority',   key: 'priority',    width: 15 },
+      { header: 'Created By', key: 'createdBy',   width: 20 },
+      { header: 'Created At', key: 'createdAt',   width: 20 },
     ];
 
-    // Style the header row
-    worksheet.getRow(1).font = { bold: true, size: 12 };
-    worksheet.getRow(1).fill = {
-      type: 'pattern',
-      pattern: 'solid',
-      fgColor: { argb: 'FF4472C4' }
-    };
-    worksheet.getRow(1).font = { bold: true, color: { argb: 'FFFFFFFF' } };
-    worksheet.getRow(1).alignment = { vertical: 'middle', horizontal: 'center' };
+    // Header row styling
+    const headerRow = worksheet.getRow(1);
+    headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+    headerRow.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4472C4' } };
+    headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
 
-    // Add data rows
     tasks.forEach(task => {
       worksheet.addRow({
-        _id: task._id.toString(),
-        author: task.author,
-        division: task.division,
-        task: task.task,
+        author:     task.author,
+        division:   task.division,
+        task:       task.task,
         dateOfTask: task.dateOfTask ? new Date(task.dateOfTask).toLocaleDateString() : '',
-        status: task.status,
-        priority: task.priority,
-        createdBy: task.createdBy ? task.createdBy.name : 'N/A',
-        createdAt: new Date(task.createdAt).toLocaleString(),
-        updatedAt: new Date(task.updatedAt).toLocaleString()
+        status:     task.status,
+        priority:   task.priority,
+        createdBy:  task.createdBy?.name || 'N/A',
+        createdAt:  new Date(task.createdAt).toLocaleString(),
       });
     });
 
-    // Apply borders to all cells
-    worksheet.eachRow((row, rowNumber) => {
+    worksheet.eachRow((row) => {
       row.eachCell((cell) => {
         cell.border = {
-          top: { style: 'thin' },
-          left: { style: 'thin' },
+          top:    { style: 'thin' },
+          left:   { style: 'thin' },
           bottom: { style: 'thin' },
-          right: { style: 'thin' }
+          right:  { style: 'thin' },
         };
       });
     });
 
-    // Auto-filter
-    worksheet.autoFilter = {
-      from: 'A1',
-      to: 'J1'
-    };
+    worksheet.autoFilter = { from: 'A1', to: 'H1' };
 
-    // Set response headers
     const fileName = `tasks_${new Date().toISOString().split('T')[0]}.xlsx`;
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
     res.setHeader('Content-Disposition', `attachment; filename="${fileName}"`);
 
-    // Write to response
+    // ✅ Use pipe instead of write() — avoids buffering issues
     await workbook.xlsx.write(res);
     res.end();
 
   } catch (error) {
     console.error('Download Excel error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error generating Excel file',
-      error: process.env.NODE_ENV === 'development' ? error.message : undefined
-    });
+    res.status(500).json({ success: false, message: 'Server error generating Excel file' });
   }
 };
-
 /**
  * @desc    Get task statistics
  * @route   GET /api/tasks/stats

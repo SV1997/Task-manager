@@ -7,7 +7,8 @@ const {
   login, 
   getProfile, 
   verifyToken, 
-  logout 
+  logout,
+  // forgotPassword
 } = require('../controllers/authController');
 const { authenticateToken } = require('../middleware/auth');
 const { validate } = require('../middleware/validator');
@@ -17,6 +18,8 @@ const { validate } = require('../middleware/validator');
  * @desc    Register a new user
  * @access  Public
  */
+router.get('/isLogin',authenticateToken)
+
 router.post(
   '/signup',
   [
@@ -83,6 +86,9 @@ router.get('/verify', authenticateToken, verifyToken);
  * @desc    Logout user
  * @access  Private
  */
+
+// router.post('/forgotpassword', forgotPassword)
+
 router.post('/logout', authenticateToken, logout);
 
 module.exports = router;
