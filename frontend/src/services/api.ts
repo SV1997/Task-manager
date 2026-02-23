@@ -79,10 +79,10 @@ export const authAPI = {
 
   },
   isLogin: async ()=>{
-    const res = await api.get('/api/auth/isLogin')
+    const res:any = await api.get('/api/auth/isLogin')
     console.log(res);
     
-    if(res.data.success!==true){
+    if(res.success!==true){
       // navigate('/login')
       window.location.replace("/login")
     }
