@@ -12,14 +12,17 @@ export const Login = ()=> {
   const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   useEffect(()=>{
-    const verifyToken=async()=>{      
+    try{const verifyToken=async()=>{      
       const res:any = await authAPI.verifyToken()
       console.log("visit", res)
       if(res.success){
         navigate("/");
       }
     }
-    verifyToken();
+    verifyToken();}
+    catch(err){
+      console.log(err)
+    }
   },[])
   const navigate = useNavigate();
   const handleLoginSuccess = (token: string, userData: any) => {
