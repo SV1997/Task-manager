@@ -185,6 +185,14 @@ const verifyToken = (req, res) => {
     }
   });
 };
+/**
+ * @desc    forgot password
+ * @route   POST /api/auth/login
+ * @access  Public
+ */
+const forgotPassword=(req,res)=>{
+  
+}
 
 /**
  * @desc    Logout user

@@ -3,7 +3,7 @@ import axios from 'axios';
 import type { AuthResponse, TaskFormData, TasksResponse, TaskStats } from '../types';
 // import { useNavigate } from 'react-router-dom';
 const resStatus = [200,201]
-const API_BASE_URL = 'https://separate-sibyl-selfprojectvaibhav-1ea40343.koyeb.app/';
+const API_BASE_URL = import.meta.env.VITE_API_URL;
 // const navigate = useNavigate();
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -12,7 +12,14 @@ const api = axios.create({
   },
 });
 function rediretUnauthorized(){
+  if(window.location.pathname==="/login"){
+    return
+  }
+  // console.log(window.location.href);
+  else{
     window.location.replace("/login")
+
+  }
 }
 // Add token to requests if available
 api.interceptors.request.use((config) => {
@@ -49,7 +56,7 @@ api.interceptors.response.use(
                 // console.log(error.response);
                 rediretUnauthorized()
             }
-            console.error("Response error:", error.response.data);
+            console.error("Response error:", error.response);
             return Promise.reject(error.response.data);
         } else if (error.request) {
             // The request was made but no response was received
@@ -153,7 +160,7 @@ export const taskAPI = {
   const token = localStorage.getItem('token');
 
   // ✅ Use fetch directly — bypasses axios interceptor that corrupts blobs
-  const response = await fetch('https://separate-sibyl-selfprojectvaibhav-1ea40343.koyeb.app/api/tasks/download/excel', {
+  const response = await fetch(import.meta.env.VITE_API_URL, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
