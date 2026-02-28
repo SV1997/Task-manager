@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { authAPI } from "../services/api";
-
+import { useLocation } from "react-router-dom";
 interface User {
   name: string;
   email: string;
@@ -9,7 +9,7 @@ interface User {
 export default function Header() {
   const [user, setUser] = useState<User | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
-
+  const location = useLocation()
   useEffect(() => {
     const stored = localStorage.getItem("user");
     if (stored) {
@@ -19,24 +19,21 @@ export default function Header() {
         // ignore
       }
     }
-  }, []);
-  
-  const handleLogout = () => {
-    console.log("logout");
-    
-    window.location.replace("/login");
-    authAPI.logout();
-  };
-
-  const initials = user?.name
+  }, [location]);
+  const initials= user?.name
     ? user.name
         .split(" ")
         .map((n) => n[0])
         .join("")
         .toUpperCase()
         .slice(0, 2)
-    : "??";
-
+    : "??"
+  const handleLogout = () => {
+    console.log("logout");
+    
+    window.location.replace("/login");
+    authAPI.logout();
+  };
   return (
     <>
       <header className="hdr-root">
